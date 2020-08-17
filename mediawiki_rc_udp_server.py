@@ -10,6 +10,7 @@ Put it in the parent directory of plugins/, at the level of bot.py
 This file should run seperately in a screen
 
 Version:
+Abandoned
 0.1.0-Beta
 """
 

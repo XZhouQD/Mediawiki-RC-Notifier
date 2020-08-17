@@ -7,6 +7,7 @@ A Nonebot Plugin
 Make sure you run mediawiki_rc_udp_server first
 
 Version:
+Abandoned
 0.1.0-Beta
 """
 

@@ -1,31 +1,20 @@
 # Mediawiki-RC-Notifier
-A Nonebot plugin that provides mediawiki recent change notification
+A Nonebot plugin that provides mediawiki recent change notification, as well as manual lookup
 
 ## How to use
-1. IMPORTANT: Make sure you have installed nonebot scheduler function!
-
-1. Put mediawiki_rc_udp_server.py in the same directory of your bot.py (parent directory of plugins/)
-
-1. Configure bind address (e.g. 127.0.0.1 for localhost, 0.0.0.0 for global listening), port and site name in mediawiki_rc_udp_server.py
-
-1. Configure your mediawiki LocalSettings.php, add the following settings:
-```
-$wgRCFeeds['rc'] = array(
-        'formatter' => 'JSONRCFeedFormatter',
-        'uri' => 'udp://{udp_server_address}:{port}',
-        'omit_bots' => true,
-);
-```
-Here, the {udp_server_address} is the address of udp server instance, and so as the port.
-
-1. Start mediawiki_rc_udp_server.py
-
-1. Add mediawiki_rc_notifier.py to your plugins/
-
-1. Configure TARGET_ID and PRIVATE to let bot send notification to groups/users
-
 1. Add mediawiki_rc_lookup.py to your plugins./
 
-1. Configure API_PATH and SITE_NAME to ensure bot can query the api correctly
+1. Configure `API_PATH, SITE_NAME, TARGET_ID, PRIVATE` to ensure bot can query the api correctly and send the message to your target.
+
+1. You may also change the scheduled job time interval as you wish. 
+
+1. Or you may want to modify the content to your target language - there is no i18n currently, text are designed for Mandarin (zh-cn).
 
 1. Restart your bot and enjoy!
+
+## Abandoned
+mediawiki_rc_notifier.py
+
+mediawiki_rc_udp_server.py
+
+These files are abandoned - no good effort of pushing notification. If you would like to help with these, you are welcome to fork and PR the changes back.
