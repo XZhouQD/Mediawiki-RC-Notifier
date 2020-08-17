@@ -2,7 +2,7 @@ from nonebot import on_command, CommandSession, permission
 import os, requests
 
 """
-Mediawiki RecentChange(RC) Notifier
+Mediawiki RecentChange(RC) Lookup Plugin
 A Nonebot Plugin
 use with configurations
 
