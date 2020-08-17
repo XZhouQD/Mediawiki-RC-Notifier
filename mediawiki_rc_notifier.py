@@ -7,11 +7,12 @@ A Nonebot Plugin
 use with configurations
 
 Version:
-0.1.0-Alpha
+0.1.0-Beta
 """
 
 # Please configure this before using:
 API_PATH='https://clover-wiki.com/wiki/api.php'
+SITE_NAME='四叶草剧场百科'
 
 # manual lookup
 @on_command('rc', aliases=('最近更改'), permission=permission.GROUP_ADMIN, only_to_me=False)
@@ -33,8 +34,8 @@ async def fetch_rc(rclimit: int) -> str:
     url = f'{API_PATH}?action=query&list=recentchanges&rclimit={rclimit}&format=json'
     r = requests.get(url)
     j = r.json()
-    result_list = []
+    result_list = [f'Recent Changes on {SITE_NAME}:\n']
     for rc_item in j['query']['recentchanges']:
-        result_list.append(f'{rc_item['rcid']}: {rc_item['title']}\n')
+        result_list.append(f'{rc_item["rcid"]}: {rc_item["title"]}\n')
     result = ''.join(result_list)
     return result
