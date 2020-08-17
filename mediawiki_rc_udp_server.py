@@ -1,5 +1,6 @@
 import socket
 import os
+from json import loads
 
 """
 Mediawiki RecentChange(RC) UDP Server 
@@ -9,7 +10,7 @@ Put it in mybot/ (the parent directory of plugins/)
 This file should run seperately in a screen
 
 Version:
-0.1.0-Alpha
+0.1.0-Beta
 """
 
 # Configurable UDP Address binding
@@ -24,10 +25,16 @@ udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 address = (IP, PORT)
 udp_socket.bind(address)
 
+with open(f'{PATH}rc_info.txt', 'w') as f:
+    pass
+
 # Infinite Loop
 while True:
     data, addr = udp_socket.recvfrom(1024)
     data = data.decode()
-    with open(f'{PATH}rc_info.txt', 'a+') as f:
-        f.seek(0)
-        f.write(f'A new change occur on {SITE_NAME}: {data["id"]}: {data["title"]}\n')
+    print(f'{addr}: {data})
+    f = open(f'{PATH}rc_info.txt', 'a+')
+    f.seek(0)
+    data = loads(data)
+    f.write(f'{SITE_NAME}有条目更新! {data["id"]}: {data["title"]}\n')
+    f.close()

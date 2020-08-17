@@ -7,7 +7,7 @@ A Nonebot Plugin
 Make sure you run mediawiki_rc_udp_server first
 
 Version:
-0.1.0-Alpha
+0.1.0-Beta
 """
 
 class NotificationCache:
@@ -29,21 +29,22 @@ class NotificationCache:
         return ''.join(result_list)
         
 notification_cache = NotificationCache()
-TARGET_ID=394626288 # notice target user/group id
-PRIVATE=True #user: true, group: false
+TARGET_ID=[926524675,1017042113] # notice target user/group id
+PRIVATE=False #user: true, group: false
 
 @nonebot.scheduler.scheduled_job('interval', seconds=10)
 async def _():
     bot = nonebot.get_bot()
     message = notification_cache.fetch()
     if len(message) != 0:
-        if PRIVATE:
-            try:
-                await bot.send_private_msg(user_id=TARGET_ID, message=message)
-            except CQHttpError:
-                pass
-        else:
-            try:
-                await bot.send_group_msg(group_id=TARGET_ID, message=message)
-            except CQHttpError:
-                pass
+        for target in TARGET_ID:
+            if PRIVATE:
+                try:
+                    await bot.send_private_msg(user_id=target, message=message)
+                except CQHttpError:
+                    pass
+            else:
+                try:
+                    await bot.send_group_msg(group_id=target, message=message)
+                except CQHttpError:
+                    pass
