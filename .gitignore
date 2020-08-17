@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Gedit Cache
+*~
+
 # C extensions
 *.so
 
