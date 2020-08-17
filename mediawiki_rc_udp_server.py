@@ -6,7 +6,7 @@ from json import loads
 Mediawiki RecentChange(RC) UDP Server 
 This is not nonebot plugin
 Do not put it in plugins/
-Put it in mybot/ (the parent directory of plugins/)
+Put it in the parent directory of plugins/, at the level of bot.py
 This file should run seperately in a screen
 
 Version:
@@ -16,7 +16,7 @@ Version:
 # Configurable UDP Address binding
 PORT=10305
 IP='0.0.0.0'
-SITE_NAME='四叶草剧场百科'
+SITE_NAME='YOUR WIKI NAME'
 PATH='plugins/mw_rc/'
 if not os.path.exists(PATH):
     os.makedirs(PATH)

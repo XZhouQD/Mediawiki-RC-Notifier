@@ -29,7 +29,7 @@ class NotificationCache:
         return ''.join(result_list)
         
 notification_cache = NotificationCache()
-TARGET_ID=[926524675,1017042113] # notice target user/group id
+TARGET_ID=[11111111,222222222] # notice target user/group id
 PRIVATE=False #user: true, group: false
 
 @nonebot.scheduler.scheduled_job('interval', seconds=10)

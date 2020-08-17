@@ -11,8 +11,8 @@ Version:
 """
 
 # Please configure this before using:
-API_PATH='https://clover-wiki.com/wiki/api.php'
-SITE_NAME='四叶草剧场百科'
+API_PATH='https://your-domain.com/wiki/api.php'
+SITE_NAME='Your sitename'
 
 # manual lookup
 @on_command('rc', aliases=('最近更改'), permission=permission.GROUP_ADMIN, only_to_me=False)
