@@ -57,6 +57,7 @@ async def notify(msg_list):
         else:
             try:
                 await bot.send_group_msg(group_id=target, message=message)
+                nonebot.log.logger.info("[MW RC No]Message sent out!")
             except CQHttpError:
                 pass
 
