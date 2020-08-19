@@ -1,4 +1,4 @@
-from nonebot import on_command, CommandSession, permission, get_bot, scheduler
+from nonebot import on_command, CommandSession, permission, on_startup, log
 import os, requests
 
 """
@@ -7,14 +7,12 @@ A Nonebot Plugin
 use with configurations
 
 Version:
-0.2.1-Beta
+0.3.0-Beta
 """
 
 # Please configure this before using:
-API_PATH='https://your-domain.com/wiki/api.php'
-SITE_NAME='YOUR WIKI'
-TARGET_ID=[11111111,222222222] # notice target user/group id
-PRIVATE=False #user: True, group: False
+API_PATH='https://your.domain/wiki/api.php'
+SITE_NAME='YOUR SITE NAME'
 
 async def fetch_rc(rclimit: int) -> str:
     url = f'{API_PATH}?action=query&list=recentchanges&rclimit={rclimit}&format=json'
@@ -48,34 +46,6 @@ class NotificationCache:
 
 notification_cache = NotificationCache()
 
-# Late Check - Ignore first round of shceduled checking!
-first_run=True
-
-@scheduler.scheduled_job('interval', seconds=30)
-async def _():
-    try:
-        bot = get_bot()
-        global first_run
-        if first_run:
-            msg = await notification_cache.fetch(rc=50)
-            first_run = False
-            return
-        message = await notification_cache.fetch()
-        if len(message) != 0:
-            for target in TARGET_ID:
-                if PRIVATE:
-                    try:
-                        await bot.send_private_msg(user_id=target, message=f'{SITE_NAME}有内容更新！\n'+message)
-                    except CQHttpError:
-                        pass
-                else:
-                    try:
-                        await bot.send_group_msg(group_id=target, message=f'{SITE_NAME}有内容更新！\n'+message)
-                    except CQHttpError:
-                        pass
-    except:
-        pass
-
 # manual lookup
 @on_command('rc', aliases=('最近更改'), permission=permission.GROUP_ADMIN, only_to_me=False)
 async def rc(session: CommandSession):
@@ -92,3 +62,9 @@ async def rc_args_parser(session: CommandSession):
         if stripped_arg:
             session.state['rclimit'] = stripped_arg
         return
+
+@on_startup
+async def startup():
+    log.logger.info('[MW RC Lo]Thank you for using Mediawiki RC Lookup!')
+    log.logger.info(f'[MW RC Lo]Your API_PATH has been set to {API_PATH}')
+    log.logger.info(f'[MW RC Lo]Your SITE_NAME has been set to {SITE_NAME}')

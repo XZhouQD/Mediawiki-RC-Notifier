@@ -1,51 +1,86 @@
 import nonebot
 from aiocqhttp.exceptions import Error as CQHttpError
+from json import loads
+from socket import socket, AF_INET, SOCK_DGRAM
+from threading import Thread
 
 """
 Mediawiki RecentChange(RC) Notifier
 A Nonebot Plugin
-Make sure you run mediawiki_rc_udp_server first
 
 Version:
-Abandoned
-0.1.0-Beta
+0.3.0-Beta
 """
 
-class NotificationCache:
-    """The notification cache"""
-    def __init__(self):
-        self.cache = []
-        self.path = 'plugins/mw_rc/rc_info.txt'
-        # cleanup cache file
-        with open(self.path, 'w') as f:
-            pass
-    
-    def fetch(self):
-        result_list = []
-        with open(self.path, 'r') as f:
-            for line in f.readlines():
-                if line not in self.cache:
-                    result_list.append(line)
-                    self.cache.append(line)
-        return ''.join(result_list)
-        
-notification_cache = NotificationCache()
+# Configurable
+IP='127.0.0.1' # ip: in string
+PORT=10305 # port: in int
+SITE_NAME='YOUR SITE NAME'
 TARGET_ID=[11111111,222222222] # notice target user/group id
-PRIVATE=False #user: true, group: false
+PRIVATE=False # user: True, group: False
 
-@nonebot.scheduler.scheduled_job('interval', seconds=10)
+class udpThread(Thread):
+    def __init__(self, ip, port, cache):
+        Thread.__init__(self)
+        self.address = (ip, port)
+        self.server = socket(AF_INET, SOCK_DGRAM)
+        self.server.bind(self.address)
+        nonebot.log.logger.info(f'[MW RC NO]Your UDP Server binds to {self.address}')
+        self.cache = cache
+
+    def run(self):
+        nonebot.log.logger.info("[MW RC No]Starting UDP Server Thread...")
+        while True:
+            try:
+                data, addr = self.server.recvfrom(2048)
+                data = loads(data.decode())
+                if data["type"] not in ["edit", "new"]:
+                    continue
+                message = f'{SITE_NAME}有条目更新! {data["id"]}: {"新建" if data["type"] == "new" else "修改"}页面 {data["title"]}'
+                nonebot.log.logger.info('[MW RC No]'+message)
+                self.cache.push(message)
+            except:
+                continue
+
+async def notify(msg_list):
+    if (len(msg_list)) == 0:
+        return
+    bot = nonebot.get_bot()
+    message = '\n'.join(msg_list)
+    for target in TARGET_ID:
+        if PRIVATE:
+            try:
+                await bot.send_private_msg(user_id=target, message=message)
+                nonebot.log.logger.info("[MW RC No]Message sent out!")
+            except CQHttpError:
+                pass
+        else:
+            try:
+                await bot.send_group_msg(group_id=target, message=message)
+            except CQHttpError:
+                pass
+
+class Cache():
+    def __init__(self):
+        self.queue = []
+
+    async def fetch(self):
+        n_list = self.queue.copy()
+        self.queue = []
+        await notify(n_list)
+
+    def push(self, item):
+        self.queue.append(item)
+
+cache = Cache()
+
+@nonebot.on_startup
+async def startup():
+    nonebot.log.logger.info('[MW RC No]Thank you for using Mediawiki RC Notifier!')
+    udp_server_thread = udpThread(IP, PORT, cache)
+    udp_server_thread.start()
+
+@nonebot.scheduler.scheduled_job('interval', seconds=30)
 async def _():
     bot = nonebot.get_bot()
-    message = notification_cache.fetch()
-    if len(message) != 0:
-        for target in TARGET_ID:
-            if PRIVATE:
-                try:
-                    await bot.send_private_msg(user_id=target, message=message)
-                except CQHttpError:
-                    pass
-            else:
-                try:
-                    await bot.send_group_msg(group_id=target, message=message)
-                except CQHttpError:
-                    pass
+    await cache.fetch()

@@ -1,20 +1,29 @@
 # Mediawiki-RC-Notifier
-A Nonebot plugin that provides mediawiki recent change notification, as well as manual lookup
+A Nonebot plugin that provides mediawiki recent change notification, as well as manual lookup.
+
+The two parts: recent change notification and manual lookup are seperated into two plugins - you can use them seperately.
 
 ## How to use
-1. Add mediawiki_rc_lookup.py to your plugins./
+### Manual Lookup
+1. Add mediawiki_rc_lookup.py to your plugins/ directory.
 
-1. Configure `API_PATH, SITE_NAME, TARGET_ID, PRIVATE` to ensure bot can query the api correctly and send the message to your target.
-
-1. You may also change the scheduled job time interval as you wish. 
-
-1. Or you may want to modify the content to your target language - there is no i18n currently, text are designed for Mandarin (zh-cn).
+1. Configure `API_PATH, SITE_NAME` to ensure bot can query the api correctly.
 
 1. Restart your bot and enjoy!
 
-## Abandoned
-mediawiki_rc_notifier.py
+### Push Notification
+1. Add mediawiki_rc_notifier.py to your plugins/ directory.
 
-mediawiki_rc_udp_server.py
+1. Configure `IP, PORT, SITE_NAME, TARGET_ID, PRIVATE` to ensure bot can send updates to correct place.
 
-These files are abandoned - no good effort of pushing notification. If you would like to help with these, you are welcome to fork and PR the changes back.
+1. Configure your Mediawiki in LocalSettings.php, add the following:
+```
+$wgRCFeeds['rc'] = array(
+        'formatter' => 'JSONRCFeedFormatter',
+        'uri' => 'udp://{IP}:{PORT}',
+        'omit_bots' => true,
+);
+```
+This will setup a RC Feed pushing changes through UDP to your bot, configured in mediawiki_rc_notifier.py.
+
+1. Restart your bot and enjoy!
