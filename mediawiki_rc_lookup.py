@@ -7,7 +7,7 @@ A Nonebot Plugin
 use with configurations
 
 Version:
-0.2.0-Beta
+0.2.1-Beta
 """
 
 # Please configure this before using:
@@ -53,25 +53,28 @@ first_run=True
 
 @scheduler.scheduled_job('interval', seconds=30)
 async def _():
-    bot = get_bot()
-    global first_run
-    if first_run:
-        msg = await notification_cache.fetch(rc=50)
-        first_run = False
-        return
-    message = await notification_cache.fetch()
-    if len(message) != 0:
-        for target in TARGET_ID:
-            if PRIVATE:
-                try:
-                    await bot.send_private_msg(user_id=target, message=f'{SITE_NAME}有内容更新！\n'+message)
-                except CQHttpError:
-                    pass
-            else:
-                try:
-                    await bot.send_group_msg(group_id=target, message=f'{SITE_NAME}有内容更新！\n'+message)
-                except CQHttpError:
-                    pass
+    try:
+        bot = get_bot()
+        global first_run
+        if first_run:
+            msg = await notification_cache.fetch(rc=50)
+            first_run = False
+            return
+        message = await notification_cache.fetch()
+        if len(message) != 0:
+            for target in TARGET_ID:
+                if PRIVATE:
+                    try:
+                        await bot.send_private_msg(user_id=target, message=f'{SITE_NAME}有内容更新！\n'+message)
+                    except CQHttpError:
+                        pass
+                else:
+                    try:
+                        await bot.send_group_msg(group_id=target, message=f'{SITE_NAME}有内容更新！\n'+message)
+                    except CQHttpError:
+                        pass
+    except:
+        pass
 
 # manual lookup
 @on_command('rc', aliases=('最近更改'), permission=permission.GROUP_ADMIN, only_to_me=False)
