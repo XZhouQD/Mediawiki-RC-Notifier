@@ -1,7 +1,6 @@
 import nonebot
 from aiocqhttp.exceptions import Error as CQHttpError
 from json import loads
-from socket import socket, AF_INET, SOCK_DGRAM
 from threading import Thread
 import socketserver
 
@@ -10,7 +9,7 @@ Mediawiki RecentChange(RC) Notifier
 A Nonebot Plugin
 
 Version:
-0.4.0-Alpha
+0.4.0-Beta
 """
 
 # Configurable
@@ -34,17 +33,14 @@ class Cache():
 
 cache = Cache()
 
-class UdpHandler(socketserver.BaseRequestHandler):
-    def __init__(self, cache):
-        socketserver.BaseRequestHandler.__init__(self)
-
+class UdpHandler(socketserver.DatagramRequestHandler):
     def handle(self):
         global cache
-        data, sock = self.request
+        data = self.rfile.read()
         data = loads(data.decode())
         if data["type"] not in ["edit", "new"]:
-            continue
-        message = f'{SITE_NAME}有条目更新! {data["id"]}: {"新建" if data["type"] == "new" else "修改"}页面 {data["title"]}'
+            return
+        message = f'{data["id"]}: {"新建" if data["type"] == "new" else "修改"}页面 {data["title"]}'
         nonebot.log.logger.info('[MW RC No]'+message)
         cache.push(message)
 
@@ -52,7 +48,7 @@ class UdpThread(Thread):
     def __init__(self, ip, port):
         Thread.__init__(self)
         self.address = (ip, port)
-        self.server = socketserver.ThreadingUDPServer(address, UdpHandler)
+        self.server = socketserver.ThreadingUDPServer(self.address, UdpHandler)
         nonebot.log.logger.info(f'[MW RC NO]Your UDP Server binds to {self.address}')
 
     def run(self):
@@ -63,7 +59,7 @@ async def notify(msg_list):
     if (len(msg_list)) == 0:
         return
     bot = nonebot.get_bot()
-    message = '\n'.join(msg_list)
+    message = f'{SITE_NAME}有条目更新!\n' + '\n'.join(msg_list)
     for target in TARGET_ID:
         if PRIVATE:
             try:
@@ -81,7 +77,7 @@ async def notify(msg_list):
 @nonebot.on_startup
 async def startup():
     nonebot.log.logger.info('[MW RC No]Thank you for using Mediawiki RC Notifier!')
-    udp_server_thread = udpThread(IP, PORT)
+    udp_server_thread = UdpThread(IP, PORT)
     udp_server_thread.start()
 
 @nonebot.scheduler.scheduled_job('interval', seconds=30)
