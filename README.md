@@ -1,7 +1,15 @@
-# Mediawiki-RC-Notifier
-A Nonebot plugin that provides mediawiki recent change notification, as well as manual lookup.
+<div align="center">
+<h1>Mediawiki-RC-Notifier</h1>
 
-The two parts: recent change notification and manual lookup are seperated into two plugins - you can use them seperately.
+### A Nonebot plugin that provides mediawiki recent change notification, as well as manual lookup.
+
+[![](https://img.shields.io/github/license/XZhouQD/Mediawiki-RC-Notifier?style=for-the-badge)](https://github.com/XZhouQD/Mediawiki-RC-Notifier/blob/master/LICENSE)
+![Mediawiki Version](https://img.shields.io/badge/Mediawiki-1.25.0+-yellow.svg?style=for-the-badge)
+[![Nonebot Version](https://img.shields.io/badge/nonebot-1.7.0+-green.svg?style=for-the-badge)](https://pypi.python.org/pypi/nonebot)
+![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg?style=for-the-badge)
+![CQHTTP Version](https://img.shields.io/badge/cqhttp-4.8+-black.svg?style=for-the-badge)
+
+</div>
 
 ## How to use
 ### Manual Lookup
