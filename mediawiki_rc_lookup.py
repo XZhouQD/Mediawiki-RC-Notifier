@@ -1,5 +1,10 @@
+from typing import List
+
 from nonebot import on_command, CommandSession, permission, on_startup, log
 import httpx
+import yaml
+import sys
+import os
 
 """
 Mediawiki RecentChange(RC) Lookup Plugin
@@ -7,15 +12,20 @@ A Nonebot Plugin
 use with configurations
 
 Version:
-0.5.0
+0.6.0
 """
 
-# Please configure this before using:
-API_PATH = 'https://your.domain/wiki/api.php'
-SITE_NAME = 'YOUR SITE NAME'
+# pre-initialize
+cur_path = sys.path[0]
+config_path = os.path.join(cur_path, 'lookup_config.yaml')
+with open(config_path, 'r') as fp:
+    config_text = fp.read()
+config = yaml.load(config_text, Loader=yaml.SafeLoader)
+API_PATH = config.get('api_path')
+SITE_NAME = config.get('site_name')
 
 
-async def fetch_rc(rclimit: int) -> str:
+async def fetch_rc(rclimit: int) -> List[str]:
     url = f'{API_PATH}?action=query&list=recentchanges' \
           f'&rclimit={rclimit}&format=json'
     async with httpx.AsyncClient() as client:

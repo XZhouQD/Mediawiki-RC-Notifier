@@ -1,0 +1,15 @@
+# Main config file for mediawiki rc notifier
+# Configure your local UDP listening server here
+listening:
+  ip: 127.0.0.1
+  port: 10305
+# Configure notification here
+notification:
+  site_name: YourSiteName
+  targets:
+    - number: 111111111111
+      type: private
+    - number: 222222222222
+      type: group
+    - number: 333333333333
+      type: group
