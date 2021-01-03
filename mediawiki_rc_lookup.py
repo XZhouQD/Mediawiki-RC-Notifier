@@ -15,15 +15,6 @@ Version:
 0.6.0
 """
 
-# pre-initialize
-cur_path = sys.path[0]
-config_path = os.path.join(cur_path, 'lookup_config.yaml')
-with open(config_path, 'r') as fp:
-    config_text = fp.read()
-config = yaml.load(config_text, Loader=yaml.SafeLoader)
-API_PATH = config.get('api_path')
-SITE_NAME = config.get('site_name')
-
 
 async def fetch_rc(rclimit: int) -> List[str]:
     url = f'{API_PATH}?action=query&list=recentchanges' \
@@ -74,3 +65,13 @@ async def startup():
     log.logger.info('[MW RC Lo]Thank you for using Mediawiki RC Lookup!')
     log.logger.info(f'[MW RC Lo]Your API_PATH has been set to {API_PATH}')
     log.logger.info(f'[MW RC Lo]Your SITE_NAME has been set to {SITE_NAME}')
+
+
+# pre-initialize
+cur_path = sys.path[0]
+config_path = os.path.join(cur_path, 'plugins/lookup_config.yaml')
+with open(config_path, 'r') as fp:
+    config_text = fp.read()
+config = yaml.load(config_text, Loader=yaml.SafeLoader)
+API_PATH = config.get('api_path')
+SITE_NAME = config.get('site_name')

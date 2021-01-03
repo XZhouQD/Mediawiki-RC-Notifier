@@ -91,7 +91,7 @@ async def _():
 
 # pre-initialize
 cur_path = sys.path[0]
-config_path = os.path.join(cur_path, 'notifier_config.yaml')
+config_path = os.path.join(cur_path, 'plugins/notifier_config.yaml')
 with open(config_path, 'r') as fp:
     config_text = fp.read()
 config = yaml.load(config_text, Loader=yaml.SafeLoader)
