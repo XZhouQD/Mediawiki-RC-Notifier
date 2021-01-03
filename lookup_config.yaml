@@ -1,0 +1,4 @@
+# Main config file for mediawiki rc lookup
+# Configure your site here
+api_path: https://your.domain/wiki/api.php
+site_name: YourSiteName
